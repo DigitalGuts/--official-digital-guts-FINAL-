@@ -1,0 +1,710 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Digital Guts</title>
+
+<style>
+:root {
+  --red: #ff0000;
+  --light-gray: #c4c4c4;
+  --dark-gray: #6c6c6c;
+  --black: #000000;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--black);
+  color: var(--light-gray);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+  cursor: none;
+}
+
+/* Background image */
+
+#background {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background-image: url("background.jpg");
+  background-size: cover;
+  background-position: center;
+  transform: scale(1);
+  cursor: grab;
+}
+
+#background:active {
+  cursor: grabbing;
+}
+
+#pixel-background {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+  opacity: .65;
+}
+
+/* Main layout */
+
+.site {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: minmax(300px, 42%) 1fr;
+  gap: 3vw;
+  width: 100%;
+  height: 100vh;
+  padding: 5vh 5vw;
+  overflow: hidden;
+}
+
+.left-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.left-panel::-webkit-scrollbar {
+  display: none;
+}
+
+.description {
+  max-width: 470px;
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--light-gray);
+  margin-bottom: 34px;
+}
+
+.section-title {
+  color: var(--red);
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.release-list {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+  margin-bottom: 34px;
+}
+
+.release {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: var(--light-gray);
+  text-decoration: none;
+  font-size: 14px;
+  transition: color .2s ease, transform .2s ease;
+}
+
+.release-line {
+  display: inline-block;
+  width: 42px;
+  height: 1px;
+  flex-shrink: 0;
+  background: var(--dark-gray);
+  transition: width .25s ease, background .25s ease;
+}
+
+.release:hover {
+  color: var(--red);
+  transform: translateX(5px);
+}
+
+.release:hover .release-line {
+  width: 58px;
+  background: var(--red);
+}
+
+.release small {
+  color: var(--dark-gray);
+  font-size: 11px;
+  margin-left: 5px;
+}
+
+.socials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+  margin-top: 25px;
+  padding-bottom: 8px;
+}
+
+.socials a {
+  color: var(--dark-gray);
+  text-decoration: none;
+  font-size: 12px;
+  transition: color .2s ease;
+}
+
+.socials a:hover {
+  color: var(--red);
+}
+
+.contact {
+  margin-top: 18px;
+  font-size: 12px;
+  color: var(--dark-gray);
+}
+
+.contact a {
+  color: var(--light-gray);
+  text-decoration: none;
+}
+
+.contact a:hover {
+  color: var(--red);
+}
+
+/* Photo spiral */
+
+.right-panel {
+  position: relative;
+  min-width: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.spiral-scene {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  perspective: 1000px;
+  touch-action: pan-y;
+}
+
+.spiral-world {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  left: 50%;
+  top: 50%;
+  transform-style: preserve-3d;
+}
+
+.spiral-card {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  left: -50px;
+  top: -50px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #171717;
+  border: 1px solid rgba(255,255,255,.12);
+  box-shadow: 0 10px 35px rgba(0,0,0,.35);
+  transform-style: preserve-3d;
+  will-change: transform, opacity, filter;
+  user-select: none;
+  pointer-events: none;
+}
+
+.spiral-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Custom cursor */
+
+#cursor {
+  position: fixed;
+  z-index: 100;
+  top: 0;
+  left: 0;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--red);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  mix-blend-mode: difference;
+}
+
+#cursor-label {
+  position: fixed;
+  z-index: 99;
+  top: 0;
+  left: 0;
+  padding: 5px 9px;
+  margin: 13px 0 0 13px;
+  color: var(--black);
+  background: var(--red);
+  font-size: 10px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  pointer-events: none;
+  white-space: nowrap;
+  opacity: .9;
+}
+
+/* Heart button */
+
+.heart-button {
+  position: fixed;
+  z-index: 20;
+  right: 32px;
+  bottom: 32px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 15px;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 40px;
+  background: #232326;
+  color: #f5f5f5;
+  font-size: 13px;
+  cursor: pointer;
+  transition: transform .2s ease, background .2s ease;
+}
+
+.heart-button:hover {
+  transform: scale(1.06);
+}
+
+.heart-icon {
+  font-size: 22px;
+  line-height: 1;
+  color: #8b8b93;
+  transition: color .2s ease, transform .35s cubic-bezier(.2,1.7,.4,1);
+}
+
+.heart-button.liked .heart-icon {
+  color: var(--red);
+  transform: scale(1.25);
+}
+
+/* Mobile */
+
+@media (max-width: 760px) {
+  html, body {
+    overflow: auto;
+    min-height: 100%;
+  }
+
+  body {
+    cursor: auto;
+  }
+
+  .site {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+    padding: 30px 22px 100px;
+    gap: 30px;
+    overflow: visible;
+  }
+
+  .left-panel {
+    overflow: visible;
+  }
+
+  .right-panel {
+    height: 430px;
+    min-height: 430px;
+  }
+
+  .description {
+    font-size: 13px;
+  }
+
+  #cursor,
+  #cursor-label {
+    display: none;
+  }
+
+  .heart-button {
+    right: 18px;
+    bottom: 18px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div id="background"></div>
+<canvas id="pixel-background"></canvas>
+
+<main class="site">
+
+  <section class="left-panel">
+
+    <div>
+      <p class="description">
+        Michigan born and Philadelphia based artist Digital Guts started producing music in 2021 and then starteed officially releasing music in 2026. The name comes from the desire to put his soul or "guts" into a digital sound. Digital Guts makes everything himself from the beats to the vocals, taking insperation from Emo-Rap, Hyperpop, and EDM.
+      </p>
+
+      <div class="section-title">Music &amp; Videos</div>
+
+      <div class="release-list">
+
+        <!-- 1. Special Moments -->
+        <a class="release" href="https://open.spotify.com/album/1HC04nQqYiZhQobYckqk34?si=olVVQbhETgqlqrRSOnAXJA" target="_blank" rel="noopener">
+          <span class="release-line"></span>
+          <span>Special Moments <small>2026 · EP</small></span>
+        </a>
+
+        <!-- 2. Dreams -->
+        <a class="release" href="https://open.spotify.com/track/0QHKYpw6T6E9ICoNalSJTR?si=30a432ff1e6446cb" target="_blank" rel="noopener">
+          <span class="release-line"></span>
+          <span>Dreams <small>2026 · Single</small></span>
+        </a>
+
+        <!-- 3. Broken -->
+        <a class="release" href="https://open.spotify.com/album/7MbMWALjXTZMoaP1yjwrVz?si=f9D02_uoTXul2WiS6t2TLw" target="_blank" rel="noopener">
+          <span class="release-line"></span>
+          <span>Broken <small>2026 · Single</small></span>
+        </a>
+
+        <!-- 4. Digital Guts -->
+        <a class="release" href="https://open.spotify.com/album/1g3aAD24rfoYUxbL4K7xbK?si=QCN-8fbuT---zpHwfxC3tA" target="_blank" rel="noopener">
+          <span class="release-line"></span>
+          <span>Digital Guts <small>2026 · Album</small></span>
+        </a>
+
+        <!-- 5. Flies -->
+        <a class="release" href="https://soundcloud.com/user-107745256/flies?si=d57dc12ab3c441eb8f02ef48b4959202&utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing" target="_blank" rel="noopener">
+          <span class="release-line"></span>
+          <span>Flies <small>2026 · Single</small></span>
+        </a>
+
+      </div>
+
+      <div class="section-title">Find Me</div>
+
+      <nav class="socials">
+        <a href="https://www.instagram.com/peevetheworld/" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://open.spotify.com/artist/2a7MeWLhOfpZWJwJs1dx9Q" target="_blank" rel="noopener">Spotify</a>
+        <a href="https://music.apple.com/us/artist/digital-guts/1895991269" target="_blank" rel="noopener">Apple Music</a>
+        <a href="https://on.soundcloud.com/3rWO5lE4peYsgQdjD4" target="_blank" rel="noopener">SoundCloud</a>
+        <a href="https://www.youtube.com/@DigitalGuts15" target="_blank" rel="noopener">YouTube</a>
+      </nav>
+
+      <div class="contact">
+        Contact: <a href="mailto:DigitalGuts15@gmail.com">DigitalGuts15@gmail.com</a>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="right-panel">
+    <div class="spiral-scene" id="spiral-scene">
+      <div class="spiral-world" id="spiral-world"></div>
+    </div>
+  </section>
+
+</main>
+
+<button class="heart-button" id="heart-button" aria-label="Like this site">
+  <span class="heart-icon">♡</span>
+  <span id="heart-count">1204</span>
+</button>
+
+<div id="cursor"></div>
+<div id="cursor-label">Digital Guts</div>
+
+<script>
+/* Draggable and zoomable background */
+
+const background = document.getElementById("background");
+
+let bgX = 0;
+let bgY = 0;
+let bgScale = 1;
+let bgDragging = false;
+let bgStartX = 0;
+let bgStartY = 0;
+
+background.addEventListener("pointerdown", (e) => {
+  bgDragging = true;
+  bgStartX = e.clientX - bgX;
+  bgStartY = e.clientY - bgY;
+  background.setPointerCapture(e.pointerId);
+});
+
+background.addEventListener("pointermove", (e) => {
+  if (!bgDragging) return;
+  bgX = e.clientX - bgStartX;
+  bgY = e.clientY - bgStartY;
+  updateBackground();
+});
+
+background.addEventListener("pointerup", () => {
+  bgDragging = false;
+});
+
+background.addEventListener("pointercancel", () => {
+  bgDragging = false;
+});
+
+background.addEventListener("wheel", (e) => {
+  e.preventDefault();
+  bgScale += e.deltaY * -0.001;
+  bgScale = Math.max(1, Math.min(3, bgScale));
+  updateBackground();
+}, { passive: false });
+
+function updateBackground() {
+  background.style.transform =
+    `translate(${bgX}px, ${bgY}px) scale(${bgScale})`;
+}
+
+/* Blinking red squares */
+
+const canvas = document.getElementById("pixel-background");
+const ctx = canvas.getContext("2d");
+
+let squares = [];
+const squareSize = 6;
+
+function resizeCanvas() {
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = window.innerWidth * dpr;
+  canvas.height = window.innerHeight * dpr;
+  canvas.style.width = window.innerWidth + "px";
+  canvas.style.height = window.innerHeight + "px";
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  const cols = Math.ceil(window.innerWidth / 35);
+  const rows = Math.ceil(window.innerHeight / 35);
+
+  squares = [];
+
+  for (let i = 0; i < cols * rows * 0.35; i++) {
+    squares.push({
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight,
+      phase: Math.random() * Math.PI * 2,
+      speed: 0.4 + Math.random() * 1.5,
+      size: squareSize * (0.5 + Math.random())
+    });
+  }
+}
+
+let pixelTime = 0;
+
+function drawPixels() {
+  ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+  pixelTime += 0.016;
+
+  for (const square of squares) {
+    const blink = (Math.sin(pixelTime * square.speed + square.phase) + 1) / 2;
+    const alpha = blink * 0.8;
+
+    ctx.fillStyle = `rgba(255, 0, 0, ${alpha})`;
+    ctx.fillRect(square.x, square.y, square.size, square.size);
+  }
+
+  requestAnimationFrame(drawPixels);
+}
+
+window.addEventListener("resize", resizeCanvas);
+resizeCanvas();
+drawPixels();
+
+/* Photo spiral */
+
+const images = [
+  "images/photo1.jpg",
+  "images/photo2.jpg",
+  "images/photo3.jpg",
+  "images/photo4.jpg",
+  "images/photo5.jpg",
+  "images/photo6.jpg",
+  "images/photo7.jpg"
+];
+
+const spiralScene = document.getElementById("spiral-scene");
+const spiralWorld = document.getElementById("spiral-world");
+
+const cards = images.map((src) => {
+  const card = document.createElement("div");
+  card.className = "spiral-card";
+
+  const img = document.createElement("img");
+  img.src = src;
+  img.alt = "Digital Guts photo";
+  img.draggable = false;
+
+  card.appendChild(img);
+  spiralWorld.appendChild(card);
+  return card;
+});
+
+let spiralRotation = 0;
+let spiralVelocity = 0.55;
+let spiralDragging = false;
+let spiralLastX = 0;
+let spiralLastY = 0;
+let spiralLastTime = 0;
+let spiralDragVelocity = 0;
+let spiralPaused = false;
+
+const radius = 170;
+const verticalSpacing = 60;
+const cardsPerTurn = 6;
+
+function renderSpiral() {
+  const count = cards.length;
+
+  cards.forEach((card, i) => {
+    const angle = (i / cardsPerTurn) * Math.PI * 2 + spiralRotation;
+    const y = (i - (count - 1) / 2) * verticalSpacing;
+
+    const x = Math.sin(angle) * radius;
+    const z = Math.cos(angle) * radius;
+
+    const depth = (z + radius) / (radius * 2);
+    const scale = 0.72 + depth * 0.28;
+    const opacity = 0.35 + depth * 0.65;
+    const blur = (1 - depth) * 6;
+
+    card.style.transform =
+      `translate3d(${x}px, ${y}px, ${z}px) scale(${scale})`;
+
+    card.style.opacity = opacity;
+    card.style.filter = `blur(${blur}px)`;
+    card.style.zIndex = Math.round(depth * 100);
+  });
+}
+
+function animateSpiral() {
+  if (!spiralPaused && !spiralDragging) {
+    spiralRotation += 0.0025 * spiralVelocity;
+  }
+
+  renderSpiral();
+  requestAnimationFrame(animateSpiral);
+}
+
+spiralScene.addEventListener("mouseenter", () => {
+  spiralPaused = true;
+});
+
+spiralScene.addEventListener("mouseleave", () => {
+  spiralPaused = false;
+});
+
+spiralScene.addEventListener("pointerdown", (e) => {
+  spiralDragging = true;
+  spiralLastX = e.clientX;
+  spiralLastY = e.clientY;
+  spiralLastTime = performance.now();
+  spiralDragVelocity = 0;
+  spiralScene.setPointerCapture(e.pointerId);
+});
+
+spiralScene.addEventListener("pointermove", (e) => {
+  if (!spiralDragging) return;
+
+  const dx = e.clientX - spiralLastX;
+  const now = performance.now();
+  const dt = Math.max(1, now - spiralLastTime);
+
+  spiralRotation += dx * 0.006;
+  spiralDragVelocity = dx / dt;
+
+  spiralLastX = e.clientX;
+  spiralLastY = e.clientY;
+  spiralLastTime = now;
+});
+
+function stopSpiralDrag() {
+  if (!spiralDragging) return;
+  spiralDragging = false;
+  spiralRotation += spiralDragVelocity * 0.15;
+}
+
+spiralScene.addEventListener("pointerup", stopSpiralDrag);
+spiralScene.addEventListener("pointercancel", stopSpiralDrag);
+
+renderSpiral();
+animateSpiral();
+
+/* Custom cursor */
+
+const cursor = document.getElementById("cursor");
+const cursorLabel = document.getElementById("cursor-label");
+
+let mouseX = window.innerWidth / 2;
+let mouseY = window.innerHeight / 2;
+let cursorX = mouseX;
+let cursorY = mouseY;
+
+window.addEventListener("mousemove", (e) => {
+  mouseX = e.clientX;
+  mouseY = e.clientY;
+});
+
+function animateCursor() {
+  cursorX += (mouseX - cursorX) * 0.2;
+  cursorY += (mouseY - cursorY) * 0.2;
+
+  cursor.style.left = cursorX + "px";
+  cursor.style.top = cursorY + "px";
+
+  cursorLabel.style.left = cursorX + "px";
+  cursorLabel.style.top = cursorY + "px";
+
+  requestAnimationFrame(animateCursor);
+}
+
+animateCursor();
+
+/* Heart button */
+
+const heartButton = document.getElementById("heart-button");
+const heartCount = document.getElementById("heart-count");
+const heartIcon = heartButton.querySelector(".heart-icon");
+
+let liked = false;
+let likes = 1204;
+
+heartButton.addEventListener("click", () => {
+  liked = !liked;
+  likes += liked ? 1 : -1;
+
+  heartCount.textContent = likes;
+  heartIcon.textContent = liked ? "♥" : "♡";
+  heartButton.classList.toggle("liked", liked);
+});
+</script>
+
+</body>
+</html>
