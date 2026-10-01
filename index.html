@@ -361,6 +361,11 @@ h1 {
 
 .curved-loop-text {
   fill: var(--red);
+  /* A fine white edge keeps the moving red letters visible over red imagery. */
+  stroke: #fff;
+  stroke-width: 0.7px;
+  stroke-linejoin: round;
+  paint-order: stroke fill;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 48px;
   font-weight: 900;
@@ -468,6 +473,28 @@ h1 {
   60% { transform: scale(.9); }
   100% { transform: scale(1); }
 }
+
+/* FULL-SCREEN LOVE MESSAGE */
+#love-message {
+  position: fixed;
+  inset: 0;
+  z-index: 10002;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: #fff;
+  text-shadow: 0 0 18px rgba(0,0,0,.9), 0 0 45px rgba(255,255,255,.25);
+  text-align: center;
+  font-family: inherit;
+  font-size: clamp(3rem, 13vw, 18rem);
+  font-weight: 900;
+  line-height: .9;
+  letter-spacing: -.06em;
+  padding: 4vw;
+  cursor: pointer;
+}
+#love-message.visible { display: flex; }
 
 /* =====================================
    CUSTOM USER CURSOR
@@ -835,6 +862,8 @@ body, body * {
   <span class="heart-icon" id="heart-icon">♡</span>
   <span id="heart-count">1204</span>
 </button>
+
+<div id="love-message" role="dialog" aria-label="I LOVE YOU TOO" tabindex="0">I LOVE YOU TOO</div>
 
 <script>
 /* =====================================
@@ -1243,9 +1272,22 @@ const heartCount = document.getElementById("heart-count");
 let liked = false;
 let likes = 1204;
 
+const loveMessage = document.getElementById("love-message");
+let loveMessageTimeout;
+
 heartButton.addEventListener("click", () => {
   liked = !liked;
   likes += liked ? 1 : -1;
+
+  // Show the love message only when the heart is filled and the count reaches 1205.
+  if (liked && likes === 1205) {
+    clearTimeout(loveMessageTimeout);
+    loveMessage.classList.add("visible");
+    loveMessage.focus();
+    loveMessageTimeout = setTimeout(() => {
+      loveMessage.classList.remove("visible");
+    }, 1000);
+  }
 
   heartCount.textContent = likes.toLocaleString();
   heartIcon.textContent = liked ? "♥" : "♡";
@@ -1254,6 +1296,13 @@ heartButton.addEventListener("click", () => {
     "aria-label",
     liked ? "Unlike Digital Guts" : "Like Digital Guts"
   );
+});
+
+loveMessage.addEventListener("click", () => loveMessage.classList.remove("visible"));
+loveMessage.addEventListener("keydown", event => {
+  if (event.key === "Escape" || event.key === "Enter" || event.key === " ") {
+    loveMessage.classList.remove("visible");
+  }
 });
 
 
