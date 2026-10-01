@@ -61,7 +61,7 @@ body {
   pointer-events: none;
   will-change: transform;
   transform-origin: center center;
-  filter: none;
+  filter: brightness(.48) contrast(1.08);
 }
 
 /* =====================================
@@ -69,7 +69,6 @@ body {
 ===================================== */
 
 #blinking-squares {
-  display: none;
   position: fixed;
   inset: 0;
   z-index: 1;
@@ -197,6 +196,7 @@ h1 {
 .releases-section {
   min-height: 0;
   flex: 1;
+  width: calc(100% - 140px);
   overflow-y: auto;
   padding-right: 8px;
   scrollbar-width: thin;
@@ -559,6 +559,7 @@ h1 {
   }
 
   .releases-section {
+    width: 100%;
     overflow: visible;
   }
 
@@ -600,7 +601,7 @@ h1 {
 
 <!-- BACKGROUND -->
 <div id="background-layer" aria-label="Draggable background photo">
-  <img id="background-photo" src="IMG_2522(2).jpg" alt="">
+  <img id="background-photo" src="IMG_2522.jpg" alt="">
 </div>
 
 <canvas id="blinking-squares" aria-hidden="true"></canvas>
