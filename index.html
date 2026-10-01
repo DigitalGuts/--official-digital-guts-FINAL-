@@ -24,58 +24,13 @@ html, body {
   margin: 0;
   width: 100%;
   min-height: 100%;
-  background: var(--black);
+  background: #000 url("IMG_2522 2.jpg") center center / cover no-repeat fixed;
   color: var(--light);
   font-family: Arial, Helvetica, sans-serif;
 }
 
 body {
   overflow: hidden;
-}
-
-/* =====================================
-   DRAGGABLE BACKGROUND PHOTO
-===================================== */
-
-#background-layer {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  overflow: hidden;
-  background: #000;
-  cursor: grab;
-  touch-action: none;
-}
-
-#background-layer.dragging {
-  cursor: grabbing;
-}
-
-#background-photo {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-  user-select: none;
-  pointer-events: none;
-  will-change: transform;
-  transform-origin: center center;
-  filter: brightness(.48) contrast(1.08);
-}
-
-/* =====================================
-   BLINKING SQUARES BACKGROUND EFFECT
-===================================== */
-
-#blinking-squares {
-  position: fixed;
-  inset: 0;
-  z-index: 1;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  opacity: .42;
 }
 
 /* =====================================
@@ -396,7 +351,7 @@ h1 {
   position: absolute;
   width: 1px;
   height: 1px;
-  left: 50%;
+  left: 55%;
   top: 52%;
   transform-style: preserve-3d;
 }
@@ -424,6 +379,7 @@ h1 {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  image-rendering: auto;
   pointer-events: none;
 }
 
@@ -599,13 +555,6 @@ h1 {
 
 <body>
 
-<!-- BACKGROUND -->
-<div id="background-layer" aria-label="Draggable background photo">
-  <img id="background-photo" src="IMG_2522.jpg" alt="">
-</div>
-
-<canvas id="blinking-squares" aria-hidden="true"></canvas>
-
 <!-- CUSTOM CURSOR -->
 <div id="custom-cursor" aria-hidden="true"></div>
 
@@ -774,7 +723,7 @@ h1 {
 </main>
 
 <!-- CENTERED FOREGROUND IMAGE -->
-<img id="center-overlay" src="center-overlay.png" alt="" aria-hidden="true">
+<img id="center-overlay" src="LOGO.PNG" alt="" aria-hidden="true">
 
 <!-- HEART -->
 <button class="heart-button" id="heart-button" aria-label="Like Digital Guts">
@@ -783,122 +732,6 @@ h1 {
 </button>
 
 <script>
-/* =====================================
-   DRAGGABLE BACKGROUND + ZOOM
-===================================== */
-
-const backgroundLayer = document.getElementById("background-layer");
-const backgroundPhoto = document.getElementById("background-photo");
-
-let bgX = 0;
-let bgY = 0;
-let bgZoom = 1;
-let bgDragging = false;
-let bgStartX = 0;
-let bgStartY = 0;
-let bgInitialX = 0;
-let bgInitialY = 0;
-
-function updateBackground() {
-  backgroundPhoto.style.transform =
-    `translate(${bgX}px, ${bgY}px) scale(${bgZoom})`;
-}
-
-backgroundLayer.addEventListener("pointerdown", event => {
-  if (event.button !== 0) return;
-  bgDragging = true;
-  bgStartX = event.clientX;
-  bgStartY = event.clientY;
-  bgInitialX = bgX;
-  bgInitialY = bgY;
-  backgroundLayer.classList.add("dragging");
-  backgroundLayer.setPointerCapture(event.pointerId);
-});
-
-backgroundLayer.addEventListener("pointermove", event => {
-  if (!bgDragging) return;
-  bgX = bgInitialX + event.clientX - bgStartX;
-  bgY = bgInitialY + event.clientY - bgStartY;
-  updateBackground();
-});
-
-function stopBackgroundDrag(event) {
-  bgDragging = false;
-  backgroundLayer.classList.remove("dragging");
-  if (backgroundLayer.hasPointerCapture(event.pointerId)) {
-    backgroundLayer.releasePointerCapture(event.pointerId);
-  }
-}
-
-backgroundLayer.addEventListener("pointerup", stopBackgroundDrag);
-backgroundLayer.addEventListener("pointercancel", stopBackgroundDrag);
-
-backgroundLayer.addEventListener("wheel", event => {
-  event.preventDefault();
-  bgZoom = Math.max(1, Math.min(3, bgZoom + (event.deltaY < 0 ? .08 : -.08)));
-  updateBackground();
-}, { passive: false });
-
-updateBackground();
-
-
-/* =====================================
-   BLINKING RED SQUARES
-===================================== */
-
-const blinkCanvas = document.getElementById("blinking-squares");
-const blinkCtx = blinkCanvas.getContext("2d");
-let blinkCells = [];
-let blinkWidth = 0;
-let blinkHeight = 0;
-
-function resizeBlinkCanvas() {
-  const dpr = Math.min(window.devicePixelRatio || 1, 2);
-  blinkWidth = window.innerWidth;
-  blinkHeight = window.innerHeight;
-  blinkCanvas.width = blinkWidth * dpr;
-  blinkCanvas.height = blinkHeight * dpr;
-  blinkCanvas.style.width = blinkWidth + "px";
-  blinkCanvas.style.height = blinkHeight + "px";
-  blinkCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-  blinkCells = [];
-  const cellSize = 34;
-
-  for (let y = 0; y < blinkHeight; y += cellSize) {
-    for (let x = 0; x < blinkWidth; x += cellSize) {
-      if (Math.random() < .16) {
-        blinkCells.push({
-          x, y,
-          size: 2 + Math.random() * 5,
-          phase: Math.random() * Math.PI * 2,
-          speed: .4 + Math.random() * 1.5,
-          alpha: .12 + Math.random() * .5
-        });
-      }
-    }
-  }
-}
-
-function drawBlinkingSquares(time) {
-  blinkCtx.clearRect(0, 0, blinkWidth, blinkHeight);
-
-  blinkCells.forEach(cell => {
-    const pulse = (Math.sin(time * .001 * cell.speed + cell.phase) + 1) / 2;
-    const alpha = cell.alpha * pulse;
-
-    blinkCtx.fillStyle = `rgba(255,0,0,${alpha})`;
-    blinkCtx.fillRect(cell.x, cell.y, cell.size, cell.size);
-  });
-
-  requestAnimationFrame(drawBlinkingSquares);
-}
-
-resizeBlinkCanvas();
-requestAnimationFrame(drawBlinkingSquares);
-window.addEventListener("resize", resizeBlinkCanvas);
-
-
 /* =====================================
    DIGITAL GUTS SHUFFLE TITLE
 ===================================== */
@@ -1025,7 +858,7 @@ artistName.addEventListener("mouseenter", () => {
 const curvedLoop = document.getElementById("curved-loop");
 const curvedTextPath = document.getElementById("curved-loop-textpath");
 const curvedMessage = "Peeve ✦ The ✦ World ✦ ";
-const curvedSpeed = 3;
+const curvedSpeed = 0.8;
 
 let curvedOffset = 0;
 let curvedTextWidth = 0;
@@ -1118,13 +951,13 @@ const spiralStage = document.getElementById("spiral-stage");
 const spiralCenter = document.getElementById("spiral-center");
 
 const galleryImages = [
-  "images/photo1.jpg",
-  "images/photo2.jpg",
-  "images/photo3.jpg",
-  "images/photo4.jpg",
-  "images/photo5.jpg",
-  "images/photo6.jpg",
-  "images/photo7.jpg"
+  "IMG_4252 2.jpg",
+  "IMG_4718 2.jpg",
+  "IMG_4767 2.jpg",
+  "IMG_4934 2.jpg",
+  "IMG_4935 2.jpg",
+  "IMG_4941 2.jpg",
+  "IMG_4950 2.jpg"
 ];
 
 const spiralCards = galleryImages.map((src, index) => {
@@ -1147,7 +980,7 @@ const spiralConfig = {
   verticalSpacing: 60,
   perspective: 1000,
   centerScale: 1.2,
-  edgeBlur: 6,
+  edgeBlur: 0,
   cardsPerTurn: 6,
   pauseOnHover: true
 };
@@ -1176,7 +1009,7 @@ function renderSpiral() {
     const depth = (z + spiralConfig.radius) / (spiralConfig.radius * 2);
     const scale = .72 + depth * .48;
     const opacity = .25 + depth * .75;
-    const blur = (1 - depth) * spiralConfig.edgeBlur;
+
 
     const rotateY = -Math.sin(angle) * 18;
 
@@ -1185,7 +1018,7 @@ function renderSpiral() {
       `rotateY(${rotateY}deg) scale(${scale})`;
 
     card.style.opacity = opacity;
-    card.style.filter = `blur(${blur}px)`;
+    card.style.filter = "none";
     card.style.zIndex = Math.round(depth * 100);
   });
 }
