@@ -61,7 +61,7 @@ body {
   pointer-events: none;
   will-change: transform;
   transform-origin: center center;
-  filter: brightness(.48) contrast(1.08);
+  filter: none;
 }
 
 /* =====================================
@@ -69,6 +69,7 @@ body {
 ===================================== */
 
 #blinking-squares {
+  display: none;
   position: fixed;
   inset: 0;
   z-index: 1;
@@ -599,7 +600,7 @@ h1 {
 
 <!-- BACKGROUND -->
 <div id="background-layer" aria-label="Draggable background photo">
-  <img id="background-photo" src="IMG_2522.jpg" alt="">
+  <img id="background-photo" src="IMG_2522(2).jpg" alt="">
 </div>
 
 <canvas id="blinking-squares" aria-hidden="true"></canvas>
