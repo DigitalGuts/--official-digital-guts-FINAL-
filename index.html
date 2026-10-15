@@ -148,6 +148,59 @@ h1 {
   opacity: .65;
 }
 
+/* MUSIC / APPEARS ON TABS */
+.music-tabs {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin: 0 0 12px;
+  border-bottom: 1px solid rgba(196, 196, 196, .22);
+}
+
+.music-tab-button {
+  appearance: none;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  margin: 0 0 -1px;
+  padding: 0 0 9px;
+  background: transparent;
+  color: var(--red);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  opacity: .65;
+}
+
+.music-tab-button:hover,
+.music-tab-button:focus-visible {
+  color: #ffffff;
+  opacity: 1;
+  outline: none;
+}
+
+.music-tab-button[aria-selected="true"] {
+  border-bottom-color: var(--red);
+  opacity: 1;
+}
+
+.music-tab-panel[hidden] {
+  display: none !important;
+}
+
+.music-category-empty {
+  margin: 18px 0;
+  color: var(--red);
+  font-size: 14px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.appears-on-release {
+  grid-template-columns: 1fr;
+}
+
 .releases-section {
   min-height: 0;
   flex: 1;
@@ -720,8 +773,14 @@ body, body * {
     </h1>
 
     <section class="releases-section">
-      <h2 class="section-heading">Music</h2>
+      <div class="music-tabs" role="tablist" aria-label="Music categories">
+        <button type="button" class="music-tab-button" id="music-tab" role="tab" aria-selected="true" aria-controls="music-panel">Music</button>
+        <button type="button" class="music-tab-button" id="appears-on-tab" role="tab" aria-selected="false" aria-controls="appears-on-panel" tabindex="-1">Appears On</button>
+        <button type="button" class="music-tab-button" id="music-videos-tab" role="tab" aria-selected="false" aria-controls="music-videos-panel" tabindex="-1">Music Videos</button>
+        <button type="button" class="music-tab-button" id="art-tab" role="tab" aria-selected="false" aria-controls="art-panel" tabindex="-1">Art</button>
+      </div>
 
+      <div class="music-tab-panel" id="music-panel" role="tabpanel" aria-labelledby="music-tab">
       <!-- FLIES -->
       <article class="release">
         <div>
@@ -800,6 +859,29 @@ body, body * {
           <img tabindex="0" class="release-cover" src="images/special-moments.jpg" alt="Special Moments artwork">
         </div>
       </article>
+      </div>
+
+      <div class="music-tab-panel" id="appears-on-panel" role="tabpanel" aria-labelledby="appears-on-tab" hidden>
+        <!-- PEACHES FEATURED APPEARANCE -->
+        <article class="release appears-on-release">
+          <div>
+            <h3 class="release-title">Peaches (feat. Digital Guts)</h3>
+            <div class="release-meta">Featured appearance</div>
+            <div class="release-links">
+              <a href="https://open.spotify.com/track/32IGN06FhieTAMCMzjhza4?si=ea9a074d30a34dbe" target="_blank" rel="noopener">Spotify</a>
+              <a href="https://music.apple.com/us/album/peaches-feat-digital-guts/6822996269?i=6822996270" target="_blank" rel="noopener">Apple Music</a>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div class="music-tab-panel" id="music-videos-panel" role="tabpanel" aria-labelledby="music-videos-tab" hidden>
+        <p class="music-category-empty">No music videos added yet.</p>
+      </div>
+
+      <div class="music-tab-panel" id="art-panel" role="tabpanel" aria-labelledby="art-tab" hidden>
+        <p class="music-category-empty">No artwork added yet.</p>
+      </div>
 
     </section>
 
@@ -1505,6 +1587,39 @@ document.querySelectorAll("[data-cover]").forEach(input => {
   });
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape' && secret.classList.contains('open')) closeSecret();
+  });
+})();
+</script>
+
+<script>
+(() => {
+  const tabs = Array.from(document.querySelectorAll('.music-tab-button'));
+  const panels = Array.from(document.querySelectorAll('.music-tab-panel'));
+
+  function activateTab(tab, moveFocus = false) {
+    tabs.forEach((item) => {
+      const selected = item === tab;
+      item.setAttribute('aria-selected', String(selected));
+      item.tabIndex = selected ? 0 : -1;
+    });
+    panels.forEach((panel) => {
+      panel.hidden = panel.id !== tab.getAttribute('aria-controls');
+    });
+    if (moveFocus) tab.focus();
+  }
+
+  tabs.forEach((tab, index) => {
+    tab.addEventListener('click', () => activateTab(tab));
+    tab.addEventListener('keydown', (event) => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight' && event.key !== 'Home' && event.key !== 'End') return;
+      event.preventDefault();
+      let nextIndex = index;
+      if (event.key === 'ArrowRight') nextIndex = (index + 1) % tabs.length;
+      if (event.key === 'ArrowLeft') nextIndex = (index - 1 + tabs.length) % tabs.length;
+      if (event.key === 'Home') nextIndex = 0;
+      if (event.key === 'End') nextIndex = tabs.length - 1;
+      activateTab(tabs[nextIndex], true);
+    });
   });
 })();
 </script>
