@@ -792,6 +792,22 @@ body.art-mode .bio-section,
 body.art-mode .social-footer {
   display: none !important;
 }
+/* Art tab becomes a single full-width gallery; hide the spiral photo column. */
+body.art-mode .site {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+}
+body.art-mode .left-column {
+  width: 100%;
+  max-width: none;
+}
+body.art-mode .right-column {
+  display: none !important;
+}
+body.art-mode .releases-section {
+  width: 100%;
+  padding-right: 0;
+}
 body.art-mode .releases-section {
   overflow: visible;
 }
