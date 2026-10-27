@@ -148,12 +148,17 @@ h1 {
   opacity: .65;
 }
 
-/* MUSIC / APPEARS ON TABS */
+/* MUSIC / APPEARS ON TABS — keep the tab bar visible while scrolling */
 .music-tabs {
+  position: sticky;
+  top: 0;
+  z-index: 50;
   display: flex;
   align-items: center;
   gap: 20px;
   margin: 0 0 12px;
+  padding-top: 8px;
+  background: #000;
   border-bottom: 1px solid rgba(196, 196, 196, .22);
 }
 
@@ -789,27 +794,35 @@ body, body * {
   filter: contrast(1.04);
 }
 body.art-mode .bio-section,
-body.art-mode .social-footer {
+body.art-mode .social-footer,
+body.music-videos-mode .bio-section,
+body.music-videos-mode .social-footer {
   display: none !important;
 }
-/* Art tab becomes a single full-width gallery; hide the spiral photo column. */
-body.art-mode .site {
+/* Art and Music Videos use a single full-width layout without the spiral photo column. */
+body.art-mode .site,
+body.music-videos-mode .site {
   grid-template-columns: minmax(0, 1fr);
   gap: 0;
 }
-body.art-mode .left-column {
+body.art-mode .left-column,
+body.music-videos-mode .left-column {
   width: 100%;
   max-width: none;
 }
-body.art-mode .right-column {
+body.art-mode .right-column,
+body.music-videos-mode .right-column {
   display: none !important;
 }
-body.art-mode .releases-section {
+body.art-mode .releases-section,
+body.music-videos-mode .releases-section {
   width: 100%;
   padding-right: 0;
-}
-body.art-mode .releases-section {
   overflow: visible;
+}
+body.music-videos-mode .music-video-card {
+  width: 100%;
+  margin: 10px 0 28px;
 }
 @media (max-width: 700px) {
   .art-grid {
@@ -1003,10 +1016,9 @@ body.art-mode .releases-section {
 
       <div class="music-tab-panel" id="music-videos-panel" role="tabpanel" aria-labelledby="music-videos-tab" hidden>
         <article class="music-video-card">
-          <h2 class="music-video-title">DIGITAL GUTS — MUSIC VIDEO</h2>
           <div class="music-video-player">
             <iframe
-              src="https://www.youtube-nocookie.com/embed/657olIT9MAY"
+              src="https://www.youtube-nocookie.com/embed/N4YbRzYssmI"
               title="Digital Guts music video on YouTube"
               loading="lazy"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -1014,7 +1026,7 @@ body.art-mode .releases-section {
               allowfullscreen>
             </iframe>
           </div>
-          <a class="music-video-link" href="https://youtu.be/657olIT9MAY?si=H2w8USSmHtZYbsWx" target="_blank" rel="noopener noreferrer">WATCH ON YOUTUBE ↗</a>
+          <a class="music-video-link" href="https://youtu.be/N4YbRzYssmI?si=nlvO8PnEnOIDA4qH" target="_blank" rel="noopener noreferrer">WATCH ON YOUTUBE ↗</a>
         </article>
       </div>
 
@@ -1747,6 +1759,7 @@ document.querySelectorAll("[data-cover]").forEach(input => {
       panel.hidden = panel.id !== tab.getAttribute('aria-controls');
     });
     document.body.classList.toggle('art-mode', tab.id === 'art-tab');
+    document.body.classList.toggle('music-videos-mode', tab.id === 'music-videos-tab');
     if (moveFocus) tab.focus();
   }
 
