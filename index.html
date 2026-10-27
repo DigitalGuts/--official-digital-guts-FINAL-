@@ -825,6 +825,52 @@ body.art-mode .releases-section {
     .appears-on-cover-wrap { display: flex; align-items: flex-start; justify-content: flex-end; }
     .appears-on-cover { display: block; width: min(100%, 220px); aspect-ratio: 1 / 1; object-fit: cover; }
     @media (max-width: 700px) { .appears-on-cover-wrap { justify-content: flex-start; } .appears-on-cover { width: min(100%, 180px); } }
+
+
+/* EMBEDDED MUSIC VIDEO */
+.music-video-card {
+  width: 100%;
+  margin: 18px 0 24px;
+  color: var(--red);
+  font-family: "Courier New", Courier, monospace;
+}
+.music-video-title {
+  margin: 0 0 12px;
+  color: var(--red);
+  font-size: 15px;
+  line-height: 1.4;
+  letter-spacing: .12em;
+  font-weight: 700;
+}
+.music-video-player {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: #000;
+  border: 1px solid rgba(255, 0, 0, .8);
+}
+.music-video-player iframe {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.music-video-link {
+  display: inline-block;
+  margin-top: 12px;
+  color: var(--red);
+  text-decoration: none;
+  font-size: 12px;
+  letter-spacing: .1em;
+}
+.music-video-link:hover,
+.music-video-link:focus-visible {
+  color: #fff;
+}
+
 </style>
 </head>
 
@@ -956,7 +1002,20 @@ body.art-mode .releases-section {
       </div>
 
       <div class="music-tab-panel" id="music-videos-panel" role="tabpanel" aria-labelledby="music-videos-tab" hidden>
-        <p class="music-category-empty">No music videos added yet.</p>
+        <article class="music-video-card">
+          <h2 class="music-video-title">DIGITAL GUTS — MUSIC VIDEO</h2>
+          <div class="music-video-player">
+            <iframe
+              src="https://www.youtube-nocookie.com/embed/657olIT9MAY"
+              title="Digital Guts music video on YouTube"
+              loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerpolicy="strict-origin-when-cross-origin"
+              allowfullscreen>
+            </iframe>
+          </div>
+          <a class="music-video-link" href="https://youtu.be/657olIT9MAY?si=H2w8USSmHtZYbsWx" target="_blank" rel="noopener noreferrer">WATCH ON YOUTUBE ↗</a>
+        </article>
       </div>
 
       <div class="music-tab-panel art-gallery" id="art-panel" role="tabpanel" aria-labelledby="art-tab" hidden>
