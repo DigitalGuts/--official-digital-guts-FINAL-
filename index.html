@@ -806,6 +806,12 @@ body, body * {
 .art-lightbox-arrow { top: 50%; transform: translateY(-50%); }
 .art-lightbox-prev { left: 16px; } .art-lightbox-next { right: 16px; }
 .art-lightbox-close:hover, .art-lightbox-arrow:hover, .art-lightbox-close:focus-visible, .art-lightbox-arrow:focus-visible { color: #fff; border-color: #fff; }
+/* Hide the centered logo while viewing the Art or Music Videos tabs. */
+body.art-mode #center-overlay,
+body.music-videos-mode #center-overlay {
+  display: none !important;
+}
+
 body.art-mode .bio-section,
 body.art-mode .social-footer,
 body.music-videos-mode .bio-section,
